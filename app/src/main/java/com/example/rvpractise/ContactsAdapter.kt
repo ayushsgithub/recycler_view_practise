@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ContactsAdapter(val context: Context, val contacts: MutableList<Person>) : RecyclerView.Adapter<ContactsAdapter.ViewHolder>() {
+class ContactsAdapter(private val context: Context, private val contacts: MutableList<Person>) : RecyclerView.Adapter<ContactsAdapter.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,7 +30,7 @@ class ContactsAdapter(val context: Context, val contacts: MutableList<Person>) :
 
         fun bind(contact: Person) {
             tvName.text = contact.name
-            tvAge.text = "Age: $contact.age"
+            tvAge.text = "Age: " + contact.age
         }
 
     }
