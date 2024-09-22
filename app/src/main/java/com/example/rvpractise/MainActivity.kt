@@ -1,13 +1,21 @@
 package com.example.rvpractise
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.io.Serializable
 
 
-data class Person(val name: String, val age: Int)
+data class Person(val name: String, val age: Int): Serializable
+
+lateinit var contacts: MutableList<Person>
+lateinit var adapter: ContactsAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,9 +25,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         
 
-        val contacts = createContacts()
+        contacts = createContacts()
         val rvContacts = findViewById<RecyclerView>(R.id.rvContacts)
-        rvContacts.adapter = ContactsAdapter(this, contacts)
+
+        adapter = ContactsAdapter(this, contacts)
+
+        rvContacts.adapter = adapter
         rvContacts.layoutManager = LinearLayoutManager(this)
     }
 
@@ -32,5 +43,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         return contacts
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.miAdd){
+            val intent = Intent(this, ContactsActivity:: class.java)
+            startActivityForResult(intent, 42)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == 42 && resultCode == Activity.RESULT_OK){
+            val newPerson = data?.getSerializableExtra("person") as Person
+            contacts.add(0, newPerson)
+            adapter.notifyDataSetChanged()
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }
